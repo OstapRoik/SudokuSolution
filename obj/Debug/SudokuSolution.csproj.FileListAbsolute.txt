@@ -1,0 +1,13 @@
+D:\Lab's\SudokuSolution\SudokuSolution\bin\Debug\SudokuSolution.exe.config
+D:\Lab's\SudokuSolution\SudokuSolution\bin\Debug\SudokuSolution.exe
+D:\Lab's\SudokuSolution\SudokuSolution\bin\Debug\SudokuSolution.pdb
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.csprojResolveAssemblyReference.cache
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\MainWindow.baml
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\MainWindow.g.cs
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\App.g.cs
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution_MarkupCompile.cache
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.g.resources
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.Properties.Resources.resources
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.csproj.GenerateResource.Cache
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.exe
+D:\Lab's\SudokuSolution\SudokuSolution\obj\Debug\SudokuSolution.pdb
