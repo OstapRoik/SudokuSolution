@@ -228,8 +228,9 @@ namespace MyProjects
                         break;
                     case 5:
                         #region ::Вихід в разі помилки::
-                        Console.Write("\r\n Error! \r\n");
-                        Console.ReadKey();
+                        //Console.Write("\r\n Error! \r\n");
+                        //Console.ReadKey();
+                        System.Windows.MessageBox.Show("Error!");
                         Environment.Exit(0);
                         #endregion
                         break;
