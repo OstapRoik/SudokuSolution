@@ -37,7 +37,7 @@ namespace MyProjects
                 switch(1)
                 {
                     case 1:
-                        #region ::Створення таблиці можливих значень::
+                        #region ::Оновлення таблиці можливих значень::
                         for (int i = 0; i < n; i++)
                         {
                             oldArray[i] = map.GetRow(i);
@@ -109,7 +109,6 @@ namespace MyProjects
                                 {
                                     int num = res[0];
                                     map.ChangeNum(i * n + count[k], num);
-                                    map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                                     break;
                                 }
                             }
@@ -153,7 +152,6 @@ namespace MyProjects
                                 {
                                     int num = res[0];
                                     map.ChangeNum(count[k] * n + i, num);
-                                    map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                                     break;
                                 }
                             }
@@ -196,7 +194,6 @@ namespace MyProjects
                                     DataBank.Push(temporaryMap);
                                     int num = ((int[])map[i])[0];
                                     map.ChangeNum(i, num);
-                                    map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                                     break;
                                 }
                             }
@@ -212,7 +209,6 @@ namespace MyProjects
                                 {
                                     int num = ((int[])map[temporaryMap.cell])[temporaryMap.Digit];
                                     map.ChangeNum(temporaryMap.cell, num);
-                                    map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                                     DataBank.Push(temporaryMap);
                                     break;
                                 }
@@ -230,8 +226,8 @@ namespace MyProjects
                         #region ::Вихід в разі помилки::
                         //Console.Write("\r\n Error! \r\n");
                         //Console.ReadKey();
-                        System.Windows.MessageBox.Show("Error!");
-                        Environment.Exit(0);
+                        System.Windows.MessageBox.Show("Error! \r\n Check the data...");
+                        return null;
                         #endregion
                         break;
                 }
