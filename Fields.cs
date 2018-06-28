@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MyProjects
+namespace MyProjects.Game
 {
-    class Map
+    public class Field
     {
         //Variables
         private Object[][] array;
@@ -12,24 +12,19 @@ namespace MyProjects
         private int SqrtArrayLength;
 
         //Constructors
-        public Map()
+        public Field(int[,] data)
         {
-            ArrayLength = 0;
-            SqrtArrayLength = 0;
-
-            array = null;
-        }
-        public Map(int[,] mas)
-        {
-            if (mas.GetLength(0) != mas.GetLength(1))
+            if (data.GetLength(0) != data.GetLength(1))
             {
+                new FormatFieldException("Wrong field size!");
+
                 ArrayLength = 0;
                 SqrtArrayLength = 0;
 
                 array = null;
                 return;
             }
-            ArrayLength = mas.GetLength(0);
+            ArrayLength = data.GetLength(0);
             SqrtArrayLength = (int)Math.Sqrt(ArrayLength);
 
             array = new Object[ArrayLength][];
@@ -38,14 +33,14 @@ namespace MyProjects
                 array[i] = new Object[ArrayLength];
                 for (int j = 0; j < ArrayLength; j++)
                 {
-                    array[i][j] = mas[i, j];
+                    array[i][j] = data[i, j];
                 }
             }
         }
-        public Map(Map oldMap)
+        public Field(Field field)
         {
-            ArrayLength = oldMap.ArrayLength;
-            SqrtArrayLength = oldMap.ArrayLength;
+            ArrayLength = field.ArrayLength;
+            SqrtArrayLength = field.SqrtArrayLength;
 
             array = new Object[ArrayLength][];
             for (int i = 0; i < ArrayLength; i++)
@@ -53,10 +48,10 @@ namespace MyProjects
                 array[i] = new Object[ArrayLength];
                 for (int j = 0; j < ArrayLength; j++)
                 {
-                    if(oldMap.array[i][j] is System.Int32[])
-                        array[i][j] = ((int[])oldMap.array[i][j]).Clone();
+                    if(field.array[i][j] is System.Int32[])
+                        array[i][j] = ((int[])field.array[i][j]).Clone();
                     else
-                        array[i][j] = oldMap.array[i][j];
+                        array[i][j] = field.array[i][j];
                 }
             }
         }
@@ -72,7 +67,6 @@ namespace MyProjects
                     {
                         if (((int[])array[i][j]).Length == 1)
                         {
-                            //array[i][j] = ((int[])array[i][j])[0];
                             int num = ((int[])array[i][j])[0];
                             this.ChangeNum(i * ArrayLength + j, num);
                         }
@@ -96,33 +90,34 @@ namespace MyProjects
                     array[i / ArrayLength][i % ArrayLength] = ((int[])array[i / ArrayLength][i % ArrayLength]).Where(elem => (elem != num)).ToArray<int>();
             }
 
-            int[] a = new int[] { 0, 1, 2, 9, 10, 11, 18, 19, 20 };
-            int[] b = new int[] { 3, 4, 5, 12, 13, 14, 21, 22, 23 };
-            int[] c = new int[] { 6, 7, 8, 15, 16, 17, 24, 25, 26 };
-            int[] d = new int[] { 27, 28, 29, 36, 37, 38, 45, 46, 47 };
-            int[] e = new int[] { 30, 31, 32, 39, 40, 41, 48, 49, 50 };
-            int[] f = new int[] { 33, 34, 35, 42, 43, 44, 51, 52, 53 };
-            int[] g = new int[] { 54, 55, 56, 63, 64, 65, 72, 73, 74 };
-            int[] h = new int[] { 57, 58, 59, 66, 67, 68, 75, 76, 77 };
-            int[] k = new int[] { 60, 61, 62, 69, 70, 71, 78, 79, 80 };
+            int[][] patterns = new int[ArrayLength][];
+            for (int i = 0; i < ArrayLength; i++)
+            {
+                patterns[i] = new int[ArrayLength];
+            }
+            int digit = 0;
+            for (int i = 0; i < SqrtArrayLength; i++)
+            {
+                for (int j = 0; j < SqrtArrayLength; j++)
+                {
+                    for (int ii = 0 + i * SqrtArrayLength; ii < (i + 1) * SqrtArrayLength; ii++)
+                    {
+                        for (int jj = 0 + j * SqrtArrayLength; jj < (j + 1) * SqrtArrayLength; jj++)
+                        {
+                            patterns[ii][jj] = digit;
+                            digit++;
+                        }
+                    }
+                }
+            }
 
-            int[] workmas = new int[0];
-            List<int[]> aaa = new List<int[]>();
-            aaa.Add(a);
-            aaa.Add(b);
-            aaa.Add(c);
-            aaa.Add(d);
-            aaa.Add(e);
-            aaa.Add(f);
-            aaa.Add(g);
-            aaa.Add(h);
-            aaa.Add(k);
+            int[] workmas = null;
 
             for (int i = 0; i < ArrayLength; i++)
             {
-                if (aaa[i].Contains(CellNumber))
+                if (patterns[i].Contains(CellNumber))
                 {
-                    workmas = aaa[i];
+                    workmas = patterns[i];
                     break;
                 }
             }
@@ -219,21 +214,25 @@ namespace MyProjects
             return result;
         }
     }
-    class MapForStorage
+    class FormatFieldException : Exception
+    {
+        public FormatFieldException(string message) : base(message) { }
+    }
+    public class FieldForStorage
     {
         //Variables
-        private Map array;
+        private Field array;
         private int cellNum;
         private int currDigit;
 
         //Constructors
-        public MapForStorage(Map _map, int _cellNum, int _currDigit)
+        public FieldForStorage(Field _map, int _cellNum, int _currDigit)
         {
             array = _map;
             cellNum = _cellNum;
             currDigit = _currDigit;
         }
-        public MapForStorage(MapForStorage map)
+        public FieldForStorage(FieldForStorage map)
         {
             array = map.map;
             cellNum = map.cell;
@@ -241,7 +240,7 @@ namespace MyProjects
         }
 
         //Properties
-        public Map map
+        public Field map
         {
             get
             {

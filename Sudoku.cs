@@ -2,30 +2,32 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MyProjects
+namespace MyProjects.Game
 {
-    static class Answer
+    static class Sudoku
     {
-        static public int[,] Sudoku(int[,] data)
+        static public int[,] Solution(int[,] data)
         {
-            Map map = new Map(data);
+            Field field = new Field(data);
+            if(field.Length == 0)
+                return null;
 
-            int n = map.Length;
+            int n = field.Length;
             int[] pattern = new int[n];
             for (int i = 0; i < n; i++)
             {
                 pattern[i] = i + 1;
             }
-            Stack<MapForStorage> DataBank = new Stack<MapForStorage>();
+            Stack<FieldForStorage> DataBank = new Stack<FieldForStorage>();
 
             //Заміна відсутніх елементів(0) на масив усіх можливих(по рядку)
             for (int i = 0; i < n*n; i++)
             {
-                int[] present = map.GetRow(i/n);
+                int[] present = field.GetRow(i/n);
                 int[] missing = pattern.Except(present).ToArray();
-                if ((int)map[i] == 0)
+                if ((int)field[i] == 0)
                 {
-                    map[i] = missing;
+                    field[i] = missing;
                 }
             }
 
@@ -40,39 +42,39 @@ namespace MyProjects
                         #region ::Оновлення таблиці можливих значень::
                         for (int i = 0; i < n; i++)
                         {
-                            oldArray[i] = map.GetRow(i);
+                            oldArray[i] = field.GetRow(i);
                         }
                         for (int i = 0; i < n*n; i++)
                         {
-                            if (map[i] is System.Int32[])
+                            if (field[i] is System.Int32[])
                             {
-                                int[] present = map.GetRow(i/n);
-                                map[i] = ((int[])map[i]).Except(present).ToArray();//виключення збігів з рядком
-                                map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
+                                int[] present = field.GetRow(i/n);
+                                field[i] = ((int[])field[i]).Except(present).ToArray();//виключення збігів з рядком
+                                field.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                             }
                         }
                         for (int i = 0; i < n * n; i++)
                         {
-                            if (map[i] is System.Int32[])
+                            if (field[i] is System.Int32[])
                             {
-                                int[] present = map.GetCol(i % n);
-                                map[i] = ((int[])map[i]).Except(present).ToArray();//виключення збігів з стовпцем
-                                map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
+                                int[] present = field.GetCol(i % n);
+                                field[i] = ((int[])field[i]).Except(present).ToArray();//виключення збігів з стовпцем
+                                field.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                             }
                         }
                         for (int i = 0; i < n * n; i++)
                         {
-                            if (map[i] is System.Int32[])
+                            if (field[i] is System.Int32[])
                             {
                                 int SqrtN = (int)Math.Sqrt(n);
-                                int[] present = map.GetCube((int)((i / n) / SqrtN) * SqrtN + (int)((i % n) / SqrtN));
-                                map[i] = ((int[])map[i]).Except(present).ToArray();//виключення збігів з квадратом
-                                map.CheckType();//заміна масивів з довжиною 1 на змінну типу int
+                                int[] present = field.GetCube((int)((i / n) / SqrtN) * SqrtN + (int)((i % n) / SqrtN));
+                                field[i] = ((int[])field[i]).Except(present).ToArray();//виключення збігів з квадратом
+                                field.CheckType();//заміна масивів з довжиною 1 на змінну типу int
                             }
                         }
                         for (int i = 0; i < n; i++)
                         {
-                            newArray[i] = map.GetRow(i);
+                            newArray[i] = field.GetRow(i);
                         }
                         if (Compare(oldArray, newArray))
                             goto case 2;
@@ -83,7 +85,7 @@ namespace MyProjects
                         //Пошук унікального елемента в рядку
                         for (int i = 0; i < n; i++)
                         {
-                            oldArray[i] = map.GetRow(i);
+                            oldArray[i] = field.GetRow(i);
                         }
                         for (int i = 0; i < n; i++)
                         {
@@ -91,9 +93,9 @@ namespace MyProjects
                             List<int> count = new List<int>();
                             for (int j = 0; j < n; j++)
                             {
-                                if (map[i*n+j] is System.Int32[])
+                                if (field[i*n+j] is System.Int32[])
                                 {
-                                    mas = mas.Union((int[])map[i*n+j]).ToArray();
+                                    mas = mas.Union((int[])field[i*n+j]).ToArray();
                                     count.Add(j);
                                 }
                             }
@@ -102,20 +104,20 @@ namespace MyProjects
                                 int[] res = mas;
                                 for (int l = 0; l < n; l++)
                                 {
-                                    if (map[i*n+l] is System.Int32[] && l != count[k])
-                                        res = res.Except((int[])map[i*n+l]).ToArray();
+                                    if (field[i*n+l] is System.Int32[] && l != count[k])
+                                        res = res.Except((int[])field[i*n+l]).ToArray();
                                 }
                                 if (res.Length != 0)
                                 {
                                     int num = res[0];
-                                    map.ChangeNum(i * n + count[k], num);
+                                    field.ChangeNum(i * n + count[k], num);
                                     break;
                                 }
                             }
                         }
                         for (int i = 0; i < n; i++)
                         {
-                            newArray[i] = map.GetRow(i);
+                            newArray[i] = field.GetRow(i);
                         }
                         if (Compare(oldArray, newArray))
                             goto case 3;
@@ -126,7 +128,7 @@ namespace MyProjects
                         //Пошук унікального елемента в стовпці
                         for (int i = 0; i < n; i++)
                         {
-                            oldArray[i] = map.GetRow(i);
+                            oldArray[i] = field.GetRow(i);
                         }
                         for (int i = 0; i < n; i++)
                         {
@@ -134,9 +136,9 @@ namespace MyProjects
                             List<int> count = new List<int>();
                             for (int j = 0; j < n; j++)
                             {
-                                if (map[j * n + i] is System.Int32[])
+                                if (field[j * n + i] is System.Int32[])
                                 {
-                                    mas = mas.Union((int[])map[j * n + i]).ToArray();
+                                    mas = mas.Union((int[])field[j * n + i]).ToArray();
                                     count.Add(j);
                                 }
                             }
@@ -145,20 +147,20 @@ namespace MyProjects
                                 int[] res = mas;
                                 for (int l = 0; l < n; l++)
                                 {
-                                    if (map[l * n + i] is System.Int32[] && l != count[k])
-                                        res = res.Except((int[])map[l * n + i]).ToArray();
+                                    if (field[l * n + i] is System.Int32[] && l != count[k])
+                                        res = res.Except((int[])field[l * n + i]).ToArray();
                                 }
                                 if (res.Length != 0)
                                 {
                                     int num = res[0];
-                                    map.ChangeNum(count[k] * n + i, num);
+                                    field.ChangeNum(count[k] * n + i, num);
                                     break;
                                 }
                             }
                         }
                         for (int i = 0; i < n; i++)
                         {
-                            newArray[i] = map.GetRow(i);
+                            newArray[i] = field.GetRow(i);
                         }
                         if (Compare(oldArray, newArray))
                             goto case 4;
@@ -168,15 +170,15 @@ namespace MyProjects
                         #region ::Стек::
                         for (int i = 0; i < n; i++)
                         {
-                            oldArray[i] = map.GetRow(i);
+                            oldArray[i] = field.GetRow(i);
                         }
                         //перевірка на пусту комірку
                         bool emptyCell = false;
                         for (int i = 0; i < n * n; i++)
                         {
-                            if (map[i] is System.Int32[])
+                            if (field[i] is System.Int32[])
                             {
-                                if (((int[])map[i]).Length == 0)
+                                if (((int[])field[i]).Length == 0)
                                 {
                                     emptyCell = true;
                                     break;
@@ -188,12 +190,12 @@ namespace MyProjects
                         {
                             for (int i = 0; i < n * n; i++)
                             {
-                                if (map[i] is System.Int32[])
+                                if (field[i] is System.Int32[])
                                 {
-                                    MapForStorage temporaryMap = new MapForStorage(new Map(map), i, 0);
+                                    FieldForStorage temporaryMap = new FieldForStorage(new Field(field), i, 0);
                                     DataBank.Push(temporaryMap);
-                                    int num = ((int[])map[i])[0];
-                                    map.ChangeNum(i, num);
+                                    int num = ((int[])field[i])[0];
+                                    field.ChangeNum(i, num);
                                     break;
                                 }
                             }
@@ -202,13 +204,13 @@ namespace MyProjects
                         {
                             while(true)
                             {
-                                MapForStorage temporaryMap = new MapForStorage(DataBank.Pop());
+                                FieldForStorage temporaryMap = new FieldForStorage(DataBank.Pop());
                                 temporaryMap.Digit++;
-                                map = new Map(temporaryMap.map);
-                                if(temporaryMap.Digit != ((int[])map[temporaryMap.cell]).Length)
+                                field = new Field(temporaryMap.map);
+                                if(temporaryMap.Digit != ((int[])field[temporaryMap.cell]).Length)
                                 {
-                                    int num = ((int[])map[temporaryMap.cell])[temporaryMap.Digit];
-                                    map.ChangeNum(temporaryMap.cell, num);
+                                    int num = ((int[])field[temporaryMap.cell])[temporaryMap.Digit];
+                                    field.ChangeNum(temporaryMap.cell, num);
                                     DataBank.Push(temporaryMap);
                                     break;
                                 }
@@ -216,7 +218,7 @@ namespace MyProjects
                         }
                         for (int i = 0; i < n; i++)
                         {
-                            newArray[i] = map.GetRow(i);
+                            newArray[i] = field.GetRow(i);
                         }
                         if (Compare(oldArray, newArray))
                             goto case 5;
@@ -224,54 +226,40 @@ namespace MyProjects
                         break;
                     case 5:
                         #region ::Вихід в разі помилки::
-                        //Console.Write("\r\n Error! \r\n");
-                        //Console.ReadKey();
                         System.Windows.MessageBox.Show("Error! \r\n Check the data...");
                         return null;
                         #endregion
-                        break;
                 }
 
                 //умова виходу з вічного циклу
                 check = false;
                 for (int i = 0; i < n; i++)
                 {
-                    HashSet<int> plural = new HashSet<int>(map.GetRow(i).Where(elem => (elem != 0)));
-                    if (plural.Count != n)
+                    int[] tempArray = field.GetRow(i);
+                    if(tempArray.Contains(0) || tempArray.Length != n)
                     {
                         check = true;
                         break;
                     }
                 }
-
-
-                //for (int i = 0; i < n; i++)
-                //{
-                //    Console.WriteLine(string.Join(" ", map.GetRow(i)));
-                //}
-                //Console.Write("\r\n");
-
-                //Print(map);
-
-                //Console.ReadKey();
             }
 
             int[,] result = new int[n, n];
             for (int i = 0; i < n*n; i++)
             {
-                result[i/n, i%n] = (int)map[i];
+                result[i/n, i%n] = (int)field[i];
             }
             return result;
         }
         static private bool Compare(int[][] array1, int[][] array2)
         {
-            bool check = true;
             if (array1.Length != array2.Length)
                 return false;
-            int n = array1.GetLength(0);
-            for (int i = 0; i < n * n; i++)
+
+            bool check = true;
+            for (int i = 0; i < array1.GetLength(0); i++)
             {
-                if (array1[(int)(i / n)][i % n] != array2[(int)(i / n)][i % n])
+                if(!array1[i].SequenceEqual(array2[i]))
                 {
                     check = false;
                     break;
@@ -279,20 +267,5 @@ namespace MyProjects
             }
             return check;
         }
-        //static private void Print(Map mas)
-        //{
-        //    Console.Write("|\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|\r\n");
-        //    for (int i = 0; i < mas.Length; i++)
-        //    {
-        //        for (int j = 0; j < mas.Length; j++)
-        //        {
-        //            if (mas[i*mas.Length+j].GetType().ToString() == "System.Int32")
-        //                Console.WriteLine(mas[i * mas.Length + j].ToString() + " | " + "System.Int32");
-        //            else
-        //                Console.WriteLine(string.Join(" ", (int[])mas[i * mas.Length + j]) + " | " + "System.Int32[]");
-        //        }
-        //        Console.Write("\r\n");
-        //    }
-        //}
     }
 }

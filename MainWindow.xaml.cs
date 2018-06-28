@@ -3,9 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
+using System.Threading;
+
 using System.Diagnostics;
 
-using MyProjects;
+using MyProjects.Game;
 
 namespace SudokuSolution
 {
@@ -14,8 +16,8 @@ namespace SudokuSolution
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly int LevelSize = 9;
-        private readonly int UserFontSize = 22;
+        private readonly int LevelSize = 9;//16
+        private readonly int UserFontSize = 22;//12
 
         public MainWindow()
         {
@@ -161,7 +163,8 @@ namespace SudokuSolution
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            int[,] outArray = Answer.Sudoku(inArray);
+
+            int[,] outArray = Sudoku.Solution(inArray);
             sw.Stop();
 
             LabelTime.Content = sw.ElapsedMilliseconds + "ms";
