@@ -6,7 +6,7 @@ namespace MyProjects.Game
 {
     static class Sudoku
     {
-        static public int[,] Solution(int[,] data)
+        static public int[,] GetSolution(int[,] data)
         {
             Field field = new Field(data);
             if(field.Length == 0)
@@ -206,7 +206,7 @@ namespace MyProjects.Game
                             {
                                 FieldForStorage temporaryMap = new FieldForStorage(DataBank.Pop());
                                 temporaryMap.Digit++;
-                                field = new Field(temporaryMap.map);
+                                field = new Field(temporaryMap.field);
                                 if(temporaryMap.Digit != ((int[])field[temporaryMap.cell]).Length)
                                 {
                                     int num = ((int[])field[temporaryMap.cell])[temporaryMap.Digit];
@@ -226,7 +226,7 @@ namespace MyProjects.Game
                         break;
                     case 5:
                         #region ::Вихід в разі помилки::
-                        System.Windows.MessageBox.Show("Error! \r\n Check the data...");
+                        new ErrorInFieldException("Incorrect the data in field!");
                         return null;
                         #endregion
                 }

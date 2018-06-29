@@ -3,8 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-using System.Threading;
-
 using System.Diagnostics;
 
 using MyProjects.Game;
@@ -162,9 +160,9 @@ namespace SudokuSolution
             int[,] inArray = GetMap();
 
             Stopwatch sw = new Stopwatch();
-            sw.Start();
 
-            int[,] outArray = Sudoku.Solution(inArray);
+            sw.Start();
+            int[,] outArray = Sudoku.GetSolution(inArray);
             sw.Stop();
 
             LabelTime.Content = sw.ElapsedMilliseconds + "ms";
@@ -176,6 +174,7 @@ namespace SudokuSolution
         {
             int[,] inArray = new int[LevelSize, LevelSize];
             int i = 0, j = 0;
+
             foreach (var item in Grid.Children)
             {
                 if (item is Label)
@@ -192,6 +191,7 @@ namespace SudokuSolution
                     }
                 }
             }
+
             return inArray;
         }
 

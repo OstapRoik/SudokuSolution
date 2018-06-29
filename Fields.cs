@@ -14,16 +14,20 @@ namespace MyProjects.Game
         //Constructors
         public Field(int[,] data)
         {
-            if (data.GetLength(0) != data.GetLength(1))
+            if (data.GetLength(0) != data.GetLength(1) || 
+                data.GetLength(0) < 9 ||
+                !IsInt(Math.Sqrt(data.GetLength(0))))
             {
-                new FormatFieldException("Wrong field size!");
+                new FormatFieldException("Wrong field size! Allowable size 9x9, 16x16, ...");
 
                 ArrayLength = 0;
                 SqrtArrayLength = 0;
-
                 array = null;
+
                 return;
             }
+
+
             ArrayLength = data.GetLength(0);
             SqrtArrayLength = (int)Math.Sqrt(ArrayLength);
 
@@ -33,7 +37,16 @@ namespace MyProjects.Game
                 array[i] = new Object[ArrayLength];
                 for (int j = 0; j < ArrayLength; j++)
                 {
-                    array[i][j] = data[i, j];
+                    if (data[i, j] >= 0 && data[i, j] <= ArrayLength)
+                        array[i][j] = data[i, j];
+                    else
+                    {
+                        new ErrorInFieldException("Incorrect the digit in field!");
+                        ArrayLength = 0;
+                        SqrtArrayLength = 0;
+                        array = null;
+                        return;
+                    }
                 }
             }
         }
@@ -175,6 +188,10 @@ namespace MyProjects.Game
             }
             return result;
         }//num => [0 ... (ArrayLength - 1)]
+        private bool IsInt(object obj)
+        {
+            return Convert.ToInt32(obj) == Convert.ToDouble(obj);
+        }
 
         //Properties
         public int Length
@@ -214,10 +231,6 @@ namespace MyProjects.Game
             return result;
         }
     }
-    class FormatFieldException : Exception
-    {
-        public FormatFieldException(string message) : base(message) { }
-    }
     public class FieldForStorage
     {
         //Variables
@@ -226,21 +239,21 @@ namespace MyProjects.Game
         private int currDigit;
 
         //Constructors
-        public FieldForStorage(Field _map, int _cellNum, int _currDigit)
+        public FieldForStorage(Field field, int cellNum, int currDigit)
         {
-            array = _map;
-            cellNum = _cellNum;
-            currDigit = _currDigit;
+            this.array = field;
+            this.cellNum = cellNum;
+            this.currDigit = currDigit;
         }
-        public FieldForStorage(FieldForStorage map)
+        public FieldForStorage(FieldForStorage field)
         {
-            array = map.map;
-            cellNum = map.cell;
-            currDigit = map.Digit;
+            array = field.field;
+            cellNum = field.cell;
+            currDigit = field.Digit;
         }
 
         //Properties
-        public Field map
+        public Field field
         {
             get
             {
